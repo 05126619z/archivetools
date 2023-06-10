@@ -2,7 +2,7 @@
 location=
 passwordsfile=
 destination="./extracted"
-
+#comments later maybe
 
 
 
@@ -62,17 +62,13 @@ if [ -z "${passwordsfile}" ]; then
   exit 1
 fi
 
-
 function cleanup {
     echo "Cleaning up and exiting..."
     exit 1
 }
 trap 'cleanup' SIGINT
 
-
 readarray -t passwords < "${passwordsfile}" 
-#this is horrible and i will not be allowed to write code ever again
-
 breaked=1
 for file in "$location"/*.rar
 do
