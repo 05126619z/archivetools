@@ -32,9 +32,9 @@ Use
 
 ```
   Usage: bruterar.sh [-h|--help] -p passwords [-d directory] -f file
-  -h, --help      Display this help message"
-  -f archives     Specify a archives folder"
-  -p passwords    Specify a passwords file"
-  -d directory    Specify a directory to extract to"
+  -h, --help      Display this help message
+  -f archives     Specify a archives folder
+  -p passwords    Specify a passwords file
+  -d directory    Specify a directory to extract to
 ```
 
