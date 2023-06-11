@@ -25,7 +25,6 @@ fi
 while [ "$1" != "" ]; do
     case $1 in
     -f)
-        echo "Found -f option"
         location=$2
         echo "location: ${location}"
         shift
@@ -67,7 +66,10 @@ function cleanup {
     exit 1
 }
 trap 'cleanup' SIGINT
-
+# TODO
+# make no password check earlier
+apt update
+apt install zip unzip -y
 readarray -t passwords < "${passwordsfile}" 
 breaked=1
 for file in "$location"/*.zip
@@ -75,10 +77,10 @@ do
     filename=$(basename "$file" .zip)
     newfilefolder="${destination}/${filename}"
     IFS=$'\n'
+    breaked=1
     for testpassword in "${passwords[@]}"
     do  
-        breaked=1
-        if unzip -Z1 -t -P "${testpassword}" "${file}">/dev/null 2>&1; then
+        if ! [ $(unzip -t -P "${testpassword}" "${file}">/dev/null 2>&1) -gt 2 ]; then
             password=${testpassword}
             breaked=0
             echo "${testpassword} is correct for the ${file}"
@@ -95,7 +97,7 @@ do
         echo "${file} extracted with password ${password}"
     else
         echo "No password found for the ${file}, assuming no password."
-        if unzip -Z1 -P $(echo -n) -t ${file}>/dev/null 2>&1;then
+        if ! [ $(unzip -t ${file}>/dev/null 2>&1) -gt 2 ];then
             mkdir -p ${newfilefolder}
             chmod +w ${newfilefolder}
             unzip -n -d ${newfilefolder} ${file}
