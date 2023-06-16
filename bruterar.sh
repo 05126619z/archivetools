@@ -78,7 +78,7 @@ do
     for testpassword in "${passwords[@]}"
     do  
         breaked=1
-        if unrar t -p"${testpassword}" "${file}">/dev/null 2>&1; then
+        if ! [ $(unrar t -p"${testpassword}" "${file}">/dev/null 2>&1) -gt 1 ]; then
             password=${testpassword}
             breaked=0
             echo "${testpassword} is correct for the ${file}"
@@ -95,7 +95,7 @@ do
         echo "${file} extracted with password ${password}"
     else
         echo "No password found for the ${file}, assuming no password."
-        if unrar t -p- "${file}">/dev/null 2>&1;then
+        if ! [ $(unrar t -p- "${file}">/dev/null 2>&1) -gt 1 ];then
             mkdir -p ${newfilefolder}
             chmod +w ${newfilefolder}
             unrar x -o- -p- "${file}" "${newfilefolder}"
