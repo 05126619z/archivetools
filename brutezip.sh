@@ -5,8 +5,6 @@ destination="./extracted"
 #comments later maybe
 
 
-
-
 function usage {
   echo "Usage: bruterar.sh [-h|--help] -p passwords [-d directory] -f file"
   echo "  -h, --help      Display this help message"
@@ -95,6 +93,7 @@ do
         chmod +w ${newfilefolder}
         unzip -n -P ${password} -d ${newfilefolder} ${file}
         echo "${file} extracted with password ${password}"
+        #echo "${filename}\n" > ./extracted.txt
     else
         echo "No password found for the ${file}, assuming no password."
         if ! [ $(unzip -t ${file}>/dev/null 2>&1) -gt 2 ];then
@@ -102,6 +101,7 @@ do
             chmod +w ${newfilefolder}
             unzip -n -d ${newfilefolder} ${file}
             echo "${file} was extracted with on password"
+            #echo "${filename}\n" > ./extracted.txt
         else
             echo "No correct password was found for the ${file}, skipping..."
         fi
