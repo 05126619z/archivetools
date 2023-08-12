@@ -66,28 +66,35 @@ function cleanup {
 trap 'cleanup' SIGINT
 # TODO
 # make no password check earlier
-apt update
-apt install zip unzip -y
+# read passwords into array
 readarray -t passwords < "${passwordsfile}" 
 breaked=1
+# write filename with extention into "file" var
 for file in "$location"/*.zip
 do
+    # make filename without extention
     filename=$(basename "$file" .zip)
+    # save destenation into var
     newfilefolder="${destination}/${filename}"
+    # separator
     IFS=$'\n'
     breaked=1
+    # test passwords with cycle
     for testpassword in "${passwords[@]}"
     do  
+        # if correct exit cycle with breaked = 0 which means success
+        # output discarded
         if ! [ $(unzip -t -P "${testpassword}" "${file}">/dev/null 2>&1) -gt 2 ]; then
             password=${testpassword}
             breaked=0
             echo "${testpassword} is correct for the ${file}"
             break
+        # otherwise not
         else
             echo "${testpassword} is wrong for the ${file}"
         fi
     done
-
+    # if breaked is 0 then create folder, chmod for write, then unzip
     if [ $breaked -eq 0 ]; then
         mkdir -p ${newfilefolder}
         chmod +w ${newfilefolder}
@@ -95,6 +102,7 @@ do
         echo "${file} extracted with password ${password}"
         #echo "${filename}\n" > ./extracted.txt
     else
+        # otherwise assume no password
         echo "No password found for the ${file}, assuming no password."
         if ! [ $(unzip -t ${file}>/dev/null 2>&1) -gt 2 ];then
             mkdir -p ${newfilefolder}
@@ -102,6 +110,7 @@ do
             unzip -n -d ${newfilefolder} ${file}
             echo "${file} was extracted with on password"
             #echo "${filename}\n" > ./extracted.txt
+        # no password was found, skipping
         else
             echo "No correct password was found for the ${file}, skipping..."
         fi
